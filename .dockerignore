@@ -1,8 +1,0 @@
-.git
-.github
-.env
-.env.example
-node_modules
-vendor
-Dockerfile
-.dockerignore
