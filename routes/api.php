@@ -17,15 +17,17 @@ Route::post('/login', [AuthController::class, 'login']);
 
 
 Route::middleware('auth:sanctum')->group(function () {
-    
+
     Route::get('/user', function (Request $request) {
         return $request->user();
     });
 
     //Empleados
     Route::middleware('is.admin')->group(function () {
-        
+
         //Route::apiResource('empleados', EmpleadoController::class);
+        Route::get('/empleados', [EmpleadoController::class, 'index']);
+        Route::get('/empleados/{id}', [EmpleadoController::class, 'show']);
         Route::post('/empleados', [EmpleadoController::class, 'store']);
         Route::put('/empleados/{id}', [EmpleadoController::class, 'update']);
         Route::delete('/empleados/{id}', [EmpleadoController::class, 'destroy']);
@@ -55,14 +57,13 @@ Route::middleware('auth:sanctum')->group(function () {
 
     //Prestamo
     Route::post('/prestamos', [PrestamoController::class, 'store']);
-    
+
     Route::get('/prestamos', [PrestamoController::class, 'index']);
-    
+
     Route::get('/prestamos/{prestamo}', [PrestamoController::class, 'show']);
-    
+
     Route::put('/prestamos/{prestamo}/devolver', [PrestamoController::class, 'marcarComoDevuelto']);
 
     //Reportes
     Route::get('/reportes/libros-mas-solicitados', [ReporteController::class, 'librosMasSolicitado']);
-
 });
