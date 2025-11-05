@@ -27,10 +27,10 @@ Route::middleware('auth:sanctum')->group(function () {
 
         //Route::apiResource('empleados', EmpleadoController::class);
         Route::get('/empleados', [EmpleadoController::class, 'index']);
-        Route::get('/empleados/{id}', [EmpleadoController::class, 'show']);
+        Route::get('/empleados/{empleado}', [EmpleadoController::class, 'show']);
         Route::post('/empleados', [EmpleadoController::class, 'store']);
-        Route::put('/empleados/{id}', [EmpleadoController::class, 'update']);
-        Route::delete('/empleados/{id}', [EmpleadoController::class, 'destroy']);
+        Route::put('/empleados/{empleado}', [EmpleadoController::class, 'update']);
+        Route::delete('/empleados/{empleado}', [EmpleadoController::class, 'destroy']);
     });
 
     //Libros
