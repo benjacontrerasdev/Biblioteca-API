@@ -74,6 +74,18 @@ class EmpleadoController extends Controller
     public function update(Request $request, Empleado $empleado)
     {
         //
+        $datosValidados = $request->validate([
+            'nombre' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:empleados',
+            'password' => 'required|string|min:8',
+            'rol' => 'required|in:admin,empleado',
+        ]);
+
+        
+        $empleado->update($datosValidados);
+
+       
+        return response()->json($empleado);
     }
 
     /**
@@ -82,5 +94,8 @@ class EmpleadoController extends Controller
     public function destroy(Empleado $empleado)
     {
         //
+        $empleado->delete();
+
+        return response()->json(null, 204);
     }
 }
