@@ -15,7 +15,23 @@ class PrestamoController extends Controller
      */
     public function index(Request $request)
     {
-        $query = Prestamo::query()->with(['libro', 'usuario', 'empleado']); // Carga las relaciones
+        $query = Prestamo::query()->with(['libro', 'usuario', 'empleado']);
+
+        if ($request->has('search')) {
+            $searchTerm = $request->search;
+
+            $query->where(function ($q) use ($searchTerm) {
+                // Busca en la tabla 'libros' relacionada
+                $q->whereHas('libro', function ($q_libro) use ($searchTerm) {
+                    $q_libro->where('titulo', 'LIKE', '%' . $searchTerm . '%');
+                })
+                // O busca en la tabla 'usuarios' relacionada
+                ->orWhereHas('usuario', function ($q_usuario) use ($searchTerm) {
+                    $q_usuario->where('nombre', 'LIKE', '%' . $searchTerm . '%')
+                              ->orWhere('codigo_estudiante', 'LIKE', '%' . $searchTerm . '%'); 
+                });
+            });
+        }
 
         // Filtro por estado: ?estado=activos, ?estado=devueltos, ?estado=retrasados
         if ($request->has('estado')) {
@@ -29,7 +45,23 @@ class PrestamoController extends Controller
             }
         }
 
-        return response()->json($query->orderBy('fecha_prestamo', 'desc')->get());
+        $allowedSorts = ['fecha_prestamo', 'fecha_devolucion_estimada', 'id'];
+
+        $sortColumn = $request->query('sort', 'fecha_prestamo');
+        $sortDirection = $request->query('direction', 'desc');
+
+        if (!in_array(strtolower($sortColumn), $allowedSorts)) {
+            $sortColumn = 'fecha_prestamo';
+        }
+        if (!in_array(strtolower($sortDirection), ['asc', 'desc'])) {
+            $sortDirection = 'desc';
+        }
+
+        $query->orderBy($sortColumn, $sortDirection);
+
+        $prestamosPaginados = $query->paginate(20);
+
+        return response()->json($prestamosPaginados);
     }
 
     /**
