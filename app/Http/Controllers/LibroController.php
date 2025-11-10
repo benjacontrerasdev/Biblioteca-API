@@ -10,10 +10,23 @@ class LibroController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
         //
-        return response()->json(Libro::all());
+        //return response()->json(Libro::all());
+        $query = Libro::query();
+
+        if($request->has('titulo')){
+            $query->where('titulo', 'like', '%' . $request->titulo . '%');
+        }
+
+        if ($request->has('autor')) {
+            $query->where('autor', 'LIKE', '%' . $request->autor . '%');
+        }
+
+        $librosPaginados = $query->paginate(20);
+
+        return response()->json($librosPaginados);
     }
 
     /**
