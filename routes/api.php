@@ -67,5 +67,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/prestamos/{prestamo}/devolver', [PrestamoController::class, 'marcarComoDevuelto']);
 
     //Reportes
+    Route::get('/reportes/dashboard', [ReporteController::class, 'dashboard']);
+
     Route::get('/reportes/libros-mas-solicitados', [ReporteController::class, 'librosMasSolicitado']);
 });
