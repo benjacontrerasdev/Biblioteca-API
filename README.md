@@ -1,59 +1,138 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# API de Gestión de Biblioteca - XYZ
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+![Laravel](https://img.shields.io/badge/Laravel-12.x-FF2D20?style=for-the-badge&logo=laravel)
+![PHP](https://img.shields.io/badge/PHP-8.2-777BB4?style=for-the-badge&logo=php)
+![MySQL](https://img.shields.io/badge/MySQL-8.0-4479A1?style=for-the-badge&logo=mysql)
+![Railway](https://img.shields.io/badge/Deploy-Railway-0B0D0E?style=for-the-badge&logo=railway)
 
-## About Laravel
+[cite_start]Este repositorio contiene el backend (API RESTful) para el sistema de gestión de la biblioteca de la Universidad Tecnológica XYZ, como parte del Trabajo Final del curso Gestores de Administración Web[cite: 1].
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## 1. Contexto del Proyecto
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+[cite_start]La biblioteca de la Universidad XYZ gestiona más de 10,000 libros y 5,000 usuarios [cite: 4] [cite_start]mediante un sistema obsoleto basado en hojas de cálculo[cite: 4]. [cite_start]Esto ha generado problemas significativos, incluyendo un 30% de retrasos en devoluciones y un 15% de pérdida de registros[cite: 5].
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+[cite_start]Esta API RESTful sirve como el cerebro central para una nueva aplicación web moderna, reemplazando los procesos manuales y optimizando la carga de trabajo de los 5 empleados de la biblioteca[cite: 5, 7].
 
-## Learning Laravel
+## 2. Stack Tecnológico
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+* **Framework Backend:** Laravel 12
+* [cite_start]**Base de Datos:** MySQL [cite: 19, 50]
+* [cite_start]**Autenticación:** Laravel Sanctum (Autenticación basada en Tokens) [cite: 16]
+* [cite_start]**Servidor de Despliegue:** Railway [cite: 14]
+* **Constructor de Despliegue:** Nixpacks
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+## 3. Características Principales
 
-## Laravel Sponsors
+Esta API proporciona *endpoints* seguros para gestionar todos los recursos de la biblioteca:
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+* [cite_start]**Autenticación:** Sistema de Login (`POST /api/login`) para empleados[cite: 16].
+* **Control de Acceso por Roles:** Middleware `is.admin` que restringe acciones sensibles (como crear empleados o libros) solo a usuarios administradores.
+* **Gestión de Empleados (CRUD Admin):** Endpoints protegidos para crear, leer, actualizar y eliminar cuentas de empleados.
+* **Gestión de Libros (CRUD):** Endpoints para gestionar el inventario de 10,000 libros.
+    * Búsqueda optimizada por `titulo`, `autor` y `categoria`.
+    * Ordenamiento dinámico (A-Z, Z-A) por cualquier columna.
+    * Paginación automática (20 resultados por página) para un rendimiento eficiente.
+* **Gestión de Usuarios (Estudiantes):** CRUD completo para los 5,000 usuarios registrados.
+    * Cálculo de "Préstamos Activos" (`prestamos_activos_count`) en la misma consulta.
+* **Gestión de Préstamos:**
+    * Lógica de negocio para `store` (crear) que descuenta el stock de un libro.
+    * Ruta personalizada `PUT /prestamos/{id}/devolver` que incrementa el stock.
+    * Ambas acciones protegidas por transacciones de base de datos (`DB::commit/rollback`) para garantizar la integridad de los datos.
+* [cite_start]**Dashboard de Reportes:** Un *endpoint* (`GET /api/reportes/dashboard`) que calcula y entrega todas las estadísticas clave [cite: 8] para el frontend:
+    * KPIs (Total Préstamos Mes, Activos, Retrasados).
+    * Datos para gráfico de Préstamos por Mes.
+    * Datos para gráfico de Categorías Más Populares.
 
-### Premium Partners
+## 4. Instalación Local
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+Para probar o continuar el desarrollo de esta API en un entorno local:
 
-## Contributing
+1.  **Clonar el repositorio:**
+    ```bash
+    git clone [URL-DE-TU-REPOSITORIO]
+    cd Biblioteca-API
+    ```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+2.  **Instalar dependencias:**
+    ```bash
+    composer install
+    ```
 
-## Code of Conduct
+3.  **Configurar el Entorno:**
+    * Copia el archivo de ejemplo: `cp .env.example .env`
+    * Genera la clave de la aplicación: `php artisan key:generate`
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+4.  **Configurar Base de Datos (.env):**
+    * Abre el archivo `.env` y configura tus credenciales de MySQL local:
+    ```env
+    DB_CONNECTION=mysql
+    DB_HOST=127.0.0.1
+    DB_PORT=3306
+    DB_DATABASE=biblioteca_local
+    DB_USERNAME=root
+    DB_PASSWORD= (tu contraseña local)
+    ```
 
-## Security Vulnerabilities
+5.  **Migrar y Sembrar (¡Importante!):**
+    Este comando creará todas las tablas y ejecutará el `EmpleadoSeeder` para crear al usuario administrador (`admin@biblioteca.com`).
+    ```bash
+    php artisan migrate --seed
+    ```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+6.  **Iniciar el servidor:**
+    ```bash
+    php artisan serve
+    ```
 
-## License
+## 5. Endpoints Principales de la API
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+La URL base de producción es: `https://[tu-url-de-railway].up.railway.app`
+
+**Nota:** Todas las peticiones (excepto `/login`) deben incluir los headers:
+* `Accept: application/json`
+* `Authorization: Bearer [TU_TOKEN]`
+
+---
+
+### Autenticación
+| Método | Ruta | Descripción |
+| :--- | :--- | :--- |
+| `POST` | `/api/login` | Inicia sesión. Devuelve un `access_token`. |
+
+---
+
+### Libros
+| Método | Ruta | Descripción |
+| :--- | :--- | :--- |
+| `GET` | `/api/libros` | Lista todos los libros (paginado). |
+| | `.../libros?titulo=Duna` | Filtra por título. |
+| | `.../libros?categoria=Ciencia` | Filtra por categoría. |
+| | `.../libros?sort=autor&direction=desc` | Ordena por autor Z-A. |
+| `POST` | `/api/libros` | (Admin) Crea un nuevo libro. |
+| `PUT` | `/api/libros/{id}` | (Admin) Actualiza un libro. |
+| `GET` | `/api/categorias` | Devuelve una lista única de categorías. |
+
+---
+
+### Préstamos
+| Método | Ruta | Descripción |
+| :--- | :--- | :--- |
+| `GET` | `/api/prestamos` | Lista todos los préstamos (paginado). |
+| | `.../prestamos?estado=retrasados` | Filtra por `activos`, `devueltos` o `retrasados`. |
+| | `.../prestamos?search=Josue` | Busca por nombre de libro o estudiante. |
+| `POST` | `/api/prestamos` | Registra un nuevo préstamo. |
+| `PUT` | `/api/prestamos/{id}/devolver` | Marca un préstamo como devuelto. |
+
+---
+
+### Reportes
+| Método | Ruta | Descripción |
+| :--- | :--- | :--- |
+| `GET` | `/api/reportes/dashboard` | (Admin) Obtiene todos los KPIs y datos de gráficos. |
+
+---
+
+## 6. Créditos
+
+* [cite_start]**Instructor:** Giancarlos Barboza N. [cite: 26, 62]
+* **Desarrollador Backend:** [Tu Nombre Aquí]
