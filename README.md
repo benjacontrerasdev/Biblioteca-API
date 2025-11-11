@@ -5,27 +5,26 @@
 ![MySQL](https://img.shields.io/badge/MySQL-8.0-4479A1?style=for-the-badge&logo=mysql)
 ![Railway](https://img.shields.io/badge/Deploy-Railway-0B0D0E?style=for-the-badge&logo=railway)
 
-[cite_start]Este repositorio contiene el backend (API RESTful) para el sistema de gestión de la biblioteca de la Universidad Tecnológica XYZ, como parte del Trabajo Final del curso Gestores de Administración Web[cite: 1].
+Este repositorio contiene el backend (API RESTful) para el sistema de gestión de la biblioteca de la Universidad Tecnológica XYZ, como parte del Trabajo Final del curso Gestores de Administración Web.
 
 ## 1. Contexto del Proyecto
 
-[cite_start]La biblioteca de la Universidad XYZ gestiona más de 10,000 libros y 5,000 usuarios [cite: 4] [cite_start]mediante un sistema obsoleto basado en hojas de cálculo[cite: 4]. [cite_start]Esto ha generado problemas significativos, incluyendo un 30% de retrasos en devoluciones y un 15% de pérdida de registros[cite: 5].
+La biblioteca de la Universidad XYZ gestiona más de 10,000 libros y 5,000 usuarios mediante un sistema obsoleto basado en hojas de cálculo. Esto ha generado problemas significativos, incluyendo un 30% de retrasos en devoluciones y un 15% de pérdida de registros.
 
-[cite_start]Esta API RESTful sirve como el cerebro central para una nueva aplicación web moderna, reemplazando los procesos manuales y optimizando la carga de trabajo de los 5 empleados de la biblioteca[cite: 5, 7].
+Esta API RESTful sirve como el cerebro central para una nueva aplicación web moderna, reemplazando los procesos manuales y optimizando la carga de trabajo de los 5 empleados de la biblioteca.
 
 ## 2. Stack Tecnológico
 
 * **Framework Backend:** Laravel 12
-* [cite_start]**Base de Datos:** MySQL [cite: 19, 50]
-* [cite_start]**Autenticación:** Laravel Sanctum (Autenticación basada en Tokens) [cite: 16]
-* [cite_start]**Servidor de Despliegue:** Railway [cite: 14]
-* **Constructor de Despliegue:** Nixpacks
+* **Base de Datos:** MySQL 
+* **Autenticación:** Laravel Sanctum (Autenticación basada en Tokens)
+* **Servidor de Despliegue:** Railway 
 
 ## 3. Características Principales
 
 Esta API proporciona *endpoints* seguros para gestionar todos los recursos de la biblioteca:
 
-* [cite_start]**Autenticación:** Sistema de Login (`POST /api/login`) para empleados[cite: 16].
+* **Autenticación:** Sistema de Login (`POST /api/login`) para empleados.
 * **Control de Acceso por Roles:** Middleware `is.admin` que restringe acciones sensibles (como crear empleados o libros) solo a usuarios administradores.
 * **Gestión de Empleados (CRUD Admin):** Endpoints protegidos para crear, leer, actualizar y eliminar cuentas de empleados.
 * **Gestión de Libros (CRUD):** Endpoints para gestionar el inventario de 10,000 libros.
@@ -38,7 +37,7 @@ Esta API proporciona *endpoints* seguros para gestionar todos los recursos de la
     * Lógica de negocio para `store` (crear) que descuenta el stock de un libro.
     * Ruta personalizada `PUT /prestamos/{id}/devolver` que incrementa el stock.
     * Ambas acciones protegidas por transacciones de base de datos (`DB::commit/rollback`) para garantizar la integridad de los datos.
-* [cite_start]**Dashboard de Reportes:** Un *endpoint* (`GET /api/reportes/dashboard`) que calcula y entrega todas las estadísticas clave [cite: 8] para el frontend:
+* **Dashboard de Reportes:** Un *endpoint* (`GET /api/reportes/dashboard`) que calcula y entrega todas las estadísticas clave para el frontend:
     * KPIs (Total Préstamos Mes, Activos, Retrasados).
     * Datos para gráfico de Préstamos por Mes.
     * Datos para gráfico de Categorías Más Populares.
@@ -134,5 +133,5 @@ La URL base de producción es: `https://[tu-url-de-railway].up.railway.app`
 
 ## 6. Créditos
 
-* [cite_start]**Instructor:** Giancarlos Barboza N. [cite: 26, 62]
-* **Desarrollador Backend:** [Tu Nombre Aquí]
+* **Instructor:** Giancarlos Barboza N. 
+* **Desarrollador Backend:** Benjamin Contreras
