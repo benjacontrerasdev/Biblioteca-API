@@ -10,10 +10,25 @@ class UsuarioController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
         //
-        return response()->json(Usuario::all());
+        //return response()->json(Usuario::all());
+        $query = Usuario::query();
+        $query->withCount('prestamosActivos');
+
+        if ($request->has('search')) {
+            $searchTerm = $request->search;
+            $query->where(function ($q) use ($searchTerm) {
+                $q->where('nombre', 'LIKE', '%' . $searchTerm . '%')
+                  ->orWhere('email', 'LIKE', '%' . $searchTerm . '%')
+                  ->orWhere('codigo_estudiante', 'LIKE', '%' . $searchTerm . '%');
+            });
+        }
+
+        $usuarios = $query->paginate(20);
+
+        return response()->json($usuarios);
     }
 
     /**
