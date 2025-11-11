@@ -12,8 +12,6 @@ class LibroController extends Controller
      */
     public function index(Request $request)
     {
-        //
-        //return response()->json(Libro::all());
         $query = Libro::query();
 
         if($request->has('titulo')){
@@ -23,6 +21,26 @@ class LibroController extends Controller
         if ($request->has('autor')) {
             $query->where('autor', 'LIKE', '%' . $request->autor . '%');
         }
+
+        if ($request->has('categoria')) {
+            $query->where('categoria', 'LIKE', '%' . $request->categoria . '%');
+        }
+
+        // --- INICIO: LÓGICA DE ORDENAMIENTO (La que faltaba) ---
+        $allowedSorts = ['id', 'titulo', 'autor', 'categoria'];
+        
+        $sortColumn = $request->query('sort', 'titulo'); // Default: ordenar por título
+        $sortDirection = $request->query('direction', 'asc'); // Default: ascendente
+
+        if (!in_array(strtolower($sortColumn), $allowedSorts)) {
+            $sortColumn = 'titulo'; 
+        }
+        if (!in_array(strtolower($sortDirection), ['asc', 'desc'])) {
+            $sortDirection = 'asc'; 
+        }
+
+        $query->orderBy($sortColumn, $sortDirection);
+        // --- FIN: LÓGICA DE ORDENAMIENTO ---
 
         $librosPaginados = $query->paginate(20);
 
@@ -46,6 +64,7 @@ class LibroController extends Controller
         $datosValidados = $request->validate([
             'titulo' => 'required|string|max:255',
             'autor' => 'required|string|max:255',
+            'categoria' => 'nullable|string|max:100',
             'isbn' => 'nullable|string|max:20|unique:libros',
             'ejemplares_totales' => 'required|integer|min:1',
             'ejemplares_disponibles' => 'required|integer|min:0|lte:ejemplares_totales',
@@ -83,12 +102,12 @@ class LibroController extends Controller
     {
         //
         $datosValidados = $request->validate([
-            'titulo' => 'required|string|max:255',
-            'autor' => 'required|string|max:255',
-            
-            'isbn' => 'nullable|string|max:20|unique:libros,isbn,' . $libro->id, 
-            'ejemplares_totales' => 'required|integer|min:1',
-            'ejemplares_disponibles' => 'required|integer|min:0|lte:ejemplares_totales',
+            'titulo' => 'sometimes|required|string|max:255',
+            'autor' => 'sometimes|required|string|max:255',
+            'categoria' => 'sometimes|nullable|string|max:100',
+            'isbn' => 'sometimes|nullable|string|max:20|unique:libros,isbn,' . $libro->id, 
+            'ejemplares_totales' => 'sometimes|required|integer|min:1',
+            'ejemplares_disponibles' => 'sometimes|required|integer|min:0|lte:ejemplares_totales',
         ]);
 
         
@@ -96,6 +115,17 @@ class LibroController extends Controller
 
         
         return response()->json($libro);
+    }
+
+    public function getCategorias()
+    {
+        $categorias = Libro::select('categoria')
+                            ->whereNotNull('categoria') // Ignora libros sin categoría
+                            ->distinct()              // Obtiene solo valores únicos
+                            ->orderBy('categoria', 'asc') // Ordena A-Z
+                            ->pluck('categoria');     // Devuelve solo un array simple ej: ["Ficción", "Historia", "Novela"]
+
+        return response()->json($categorias);
     }
 
     /**

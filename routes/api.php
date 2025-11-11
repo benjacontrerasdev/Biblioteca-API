@@ -38,6 +38,8 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::get('/libros/{libro}', [LibroController::class, 'show']);
 
+    Route::get('/categorias', [LibroController::class, 'getCategorias']);
+
     Route::middleware('is.admin')->group(function () {
         Route::post('/libros', [LibroController::class, 'store']);
         Route::put('/libros/{libro}', [LibroController::class, 'update']);
